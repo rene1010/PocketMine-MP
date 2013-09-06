@@ -197,7 +197,7 @@ class BlockAPI{
 
 	public function init(){
 		$this->server->schedule(1, array($this, "blockUpdateTick"), array(), true);
-		$this->server->api->console->register("give", "<player> <item[:damage]> [amount]", array($this, "commandHandler"));
+		$this->server->api->console->register("give", "<".LangAPI::get("generic.player")."> <".LangAPI::get("generic.item")."[:".LangAPI::get("generic.metadata")."]> [".LangAPI::get("generic.amount")."]", array($this, "commandHandler"));
 	}
 
 	public function commandHandler($cmd, $params, $issuer, $alias){
@@ -205,7 +205,7 @@ class BlockAPI{
 		switch($cmd){
 			case "give":
 				if(!isset($params[0]) or !isset($params[1])){
-					$output .= "Usage: /give <player> <item[:damage]> [amount]\n";
+					$output .= LangAPI::get("command.usage").": /give <".LangAPI::get("generic.player")."> <".LangAPI::get("generic.item")."[:".LangAPI::get("generic.metadata")."]> [".LangAPI::get("generic.amount")."]\n";
 					break;
 				}
 				$player = $this->server->api->player->get($params[0]);

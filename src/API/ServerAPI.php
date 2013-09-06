@@ -92,21 +92,24 @@ class ServerAPI{
 		$this->server = new PocketMinecraftServer($this->getProperty("server-name"), $this->getProperty("gamemode"), ($seed = $this->getProperty("level-seed")) != "" ? (int) $seed:false, $this->getProperty("server-port"), ($ip = $this->getProperty("server-ip")) != "" ? $ip:"0.0.0.0");
 		$this->server->api = $this;
 		self::$serverRequest = $this->server;
-		console("[INFO] This server is running PocketMine-MP version ".($version->isDev() ? FORMAT_YELLOW:"").MAJOR_VERSION.FORMAT_RESET." (MCPE: ".CURRENT_MINECRAFT_VERSION.") (API ".CURRENT_API_VERSION.")", true, true, 0);
-		console("[INFO] PocketMine-MP is distibuted under the LGPL License", true, true, 0);
+		
+		$this->loadAPI("lang", "LangAPI"); //Fast start
+		
+		console(LangAPI::get("console.info")." ".LangAPI::get("pocketmine.info", array(($version->isDev() ? FORMAT_YELLOW:"").MAJOR_VERSION.FORMAT_RESET, CURRENT_MINECRAFT_VERSION, CURRENT_API_VERSION)), true, true, 0);
+		console(LangAPI::get("console.info")." ".LangAPI::get("pocketmine.license"), true, true, 0);
 
 		if($this->getProperty("upnp-forwarding") === true){
-			console("[INFO] [UPnP] Trying to port forward...");
+			console(LangAPI::get("console.info")." [UPnP] ".LangAPI::get("upnp.trying"));
 			UPnP_PortForward($this->getProperty("server-port"));
 		}
 
 		if($this->getProperty("last-update") === false or ($this->getProperty("last-update") + 3600) < time()){
-			console("[INFO] Checking for new server version");
-			console("[INFO] Last check: ".FORMAT_AQUA.date("Y-m-d H:i:s", $this->getProperty("last-update"))."\x1b[0m");
+			console(LangAPI::get("console.info")." ".LangAPI::get("pocketmine.update.check"));
+			console(LangAPI::get("console.info")." ".LangAPI::get("pocketmine.update.lastcheck", array(FORMAT_AQUA.date("Y-m-d H:i:s", $this->getProperty("last-update")).FORMAT_RESET)));
 			$info = json_decode(Utils::curl_get("http://www.pocketmine.net/latest"), true);
 			if($this->server->version->isDev()){
 				if($info === false or !isset($info["development"])){
-					console("[ERROR] PocketMine API error");
+					console(LangAPI::get("console.warning")." ".LangAPI::get("pocketmine.update.apierror"));
 				}else{
 					$last = $info["development"]["date"];
 					if($last >= $this->getProperty("last-update") and $this->getProperty("last-update") !== false and GIT_COMMIT != $info["development"]["commit"]){
@@ -121,7 +124,7 @@ class ServerAPI{
 				}
 			}else{
 				if($info === false or !isset($info["stable"])){
-					console("[ERROR] PocketMine API error");
+					console(LangAPI::get("console.warning")." ".LangAPI::get("pocketmine.update.apierror"));
 				}else{
 					$newest = new VersionString(MAJOR_VERSION);
 					$newestN = $newest->getNumber();
@@ -141,8 +144,7 @@ class ServerAPI{
 		}
 
 		$this->loadProperties();
-		
-		
+
 		$this->loadAPI("console", "ConsoleAPI");
 		$this->loadAPI("level", "LevelAPI");
 		$this->loadAPI("block", "BlockAPI");
@@ -222,7 +224,7 @@ class ServerAPI{
 			$value = array("M" => 1, "G" => 1024);
 			$real = ((int) substr($memory, 0, -1)) * $value[substr($memory, -1)];
 			if($real < 128){
-				console("[WARNING] PocketMine-MP may not work right with less than 128MB of RAM", true, true, 0);
+				console(LangAPI::get("console.warning")." ".LangAPI::get("pocketmine.lowram"));
 			}
 			@ini_set("memory_limit", $memory);
 		}else{
@@ -299,7 +301,7 @@ class ServerAPI{
 		}
 		$this->__destruct();
 		if($this->getProperty("upnp-forwarding") === true ){
-			console("[INFO] [UPnP] Removing port forward...");
+			console(LangAPI::get("console.info")." [UPnP] ".LangAPI::get("upnp.remove"));
 			UPnP_RemovePortForward($this->getProperty("server-port"));
 		}
 		return $this->restart;
