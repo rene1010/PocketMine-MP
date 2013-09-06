@@ -1,3 +1,29 @@
 language.name=English
 language.code=en
-language.fullcode=en_US
+language.locale=en_US
+
+console.info=[INFO]
+console.error=[ERROR]
+console.warning=[WARNING]
+console.notice=[NOTICE]
+console.debug=[DEBUG]
+
+pocketmine.info=This server is running PocketMine-MP version %s (MCPE: %s) (API %s)
+pocketmine.license=PocketMine-MP is distibuted under the LGPL License
+pocketmine.lowram=PocketMine-MP may not work right with less than 128MB of RAM
+
+pocketmine.update.check=Checking for new server version
+pocketmine.update.lastcheck=Last check: %s
+pocketmine.update.apierror=PocketMine update API error
+
+command.usage=Usage
+
+generic.player=player
+generic.item=item
+generic.metadata=damage
+generic.amount=amount
+generic.playerInCreative=Player is in creative mode.
+
+
+upnp.trying=Trying to port forward...
+upnp.remove=Removing port forward...
