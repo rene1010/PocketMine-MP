@@ -46,7 +46,7 @@ class Entity extends Position{
 	public $fallY;
 	public $fallStart;
 	private $tickCounter;
-	private $speedMeasure = array(0, 0, 0);
+	private $speedMeasure = array(0, 0, 0, 0, 0, 0, 0);
 	private $server;
 	private $isStatic;
 	public $level;
@@ -148,9 +148,8 @@ class Entity extends Position{
 			return false;
 		}
 		if($this->type === OBJECT_PRIMEDTNT){
-			$this->data["fuse"] -= 5;
 			$this->updateMetadata();
-			if($this->data["fuse"] <= 0){
+			if(((microtime(true) - $this->spawntime) * 20) >= $this->data["fuse"]){
 				$this->close();
 				$explosion = new Explosion($this, $this->data["power"]);
 				$explosion->explode();
@@ -520,7 +519,7 @@ class Entity extends Position{
 					
 				}
 				$this->calculateVelocity();
-				if($this->speed <= 7 or ($this->speed <= 15 and ($this->player->gamemode & 0x01) === 0x01)){
+				if($this->speed <= 9 or ($this->speed <= 20 and ($this->player->gamemode & 0x01) === 0x01)){
 					$this->player->lastCorrect = new Vector3($this->last[0], $this->last[1], $this->last[2]);
 				}
 			}
@@ -607,7 +606,7 @@ class Entity extends Position{
 			}
 			$d[16]["value"] = (($this->data["Sheared"] == 1 ? 1:0) << 4) | ($this->data["Color"] & 0x0F);
 		}elseif($this->type === OBJECT_PRIMEDTNT){
-			$d[16]["value"] = $this->data["fuse"];
+			$d[16]["value"] = (int) max(0, $this->data["fuse"] - (microtime(true) - $this->spawntime) * 20);
 		}elseif($this->class === ENTITY_PLAYER){
 			if($this->player->isSleeping !== false){
 				$d[16]["value"] = 2;
@@ -849,7 +848,7 @@ class Entity extends Position{
 	}
 
 	public function resetSpeed(){
-		$this->speedMeasure = array(0, 0, 0);	
+		$this->speedMeasure = array(0, 0, 0, 0, 0, 0, 0);	
 	}
 
 	public function getSpeed(){
@@ -867,7 +866,7 @@ class Entity extends Position{
 		$speedX = ($this->last[0] - $this->x) / $diffTime;
 		$speedY = ($this->last[1] - $this->y) / $diffTime;
 		$speedZ = ($this->last[2] - $this->z) / $diffTime;
-		if($this->speedX != $speedX or $this->speedY = $speedY or $this->speedZ = $speedZ){
+		if($this->speedX != $speedX or $this->speedY != $speedY or $this->speedZ != $speedZ){
 			$this->speedX = $speedX;
 			$this->speedY = $speedY;
 			$this->speedZ = $speedZ;

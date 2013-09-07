@@ -47,13 +47,13 @@ class Explosion{
 			for($j = 0; $j < $this->i; ++$j){
 				for($k = 0; $k < $this->i; ++$k){
 					if($i === 0 or $i === ($this->i - 1) or $j === 0 or $j === ($this->i - 1) or $k === 0 or $k === ($this->i - 1)){
-						$d3 = $i / ($this->i - 1) * 2 - 1;
-						$d4 = $j / ($this->i - 1) * 2 - 1;
-						$d5 = $k / ($this->i - 1) * 2 - 1;
-						$d6 = sqrt($d3 * $d3 + $d4 * $d4 + $d5 * $d5);
-						$d3 /= $d6;
-						$d4 /= $d6;
-						$d5 /= $d6;
+						$vectorX = $i / ($this->i - 1) * 2 - 1;
+						$vectorY = $j / ($this->i - 1) * 2 - 1;
+						$vectorZ = $k / ($this->i - 1) * 2 - 1;
+						$d6 = sqrt($vectorX * $vectorX + $vectorY * $vectorY + $vectorZ * $vectorZ);
+						$vectorX /= $d6;
+						$vectorY /= $d6;
+						$vectorZ /= $d6;
 						
 						$blastForce = $this->size * (mt_rand(700, 1300) / 1000);
 						$X = $this->source->x;
@@ -73,9 +73,9 @@ class Explosion{
 								}
 							}
 							
-							$X += $d3 * $stepLen;
-							$Y += $d4 * $stepLen;
-							$Z += $d5 * $stepLen;
+							$X += $vectorX * $stepLen;
+							$Y += $vectorY * $stepLen;
+							$Z += $vectorZ * $stepLen;
 						}
 					}
 				}
@@ -106,7 +106,7 @@ class Explosion{
 				$server->api->entity->spawnToAll($e);
 			}
 			$send[] = new Vector3($block->x - $source->x, $block->y - $source->y, $block->z - $source->z);
-			if(mt_rand(0, 100) < 30){
+			if(mt_rand(0, 10000) < ((1/$this->size) * 10000)){
 				$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($block->getID(), $block->getMetadata()));
 			}
 		}
